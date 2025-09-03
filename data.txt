@@ -1,0 +1,5 @@
+This is a test document.
+First, testing how many words in the file . 
+Second, compare the shortest word in the file.
+Third, compare the longest word in the file.
+Last, .calculate. the average length of the words.w .
