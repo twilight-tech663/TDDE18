@@ -27,10 +27,7 @@ int main()
                 {
                     current_word += letter;
                     ++ total_length;
-                }
-                // other situation: means end of character, begin counting word
-                else
-                {
+                } else {
                     if(!current_word.empty())    // check current word, avoid consecutive spaces or symbols
                     {
                         word_num ++;
