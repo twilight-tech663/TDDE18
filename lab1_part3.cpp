@@ -46,7 +46,8 @@ int main()
                 }
             } 
         }
-        average_length = total_length * 1.0 / word_num;
+        
+        average_length = total_length / static_cast <double> (word_num);
     
         cout << total_length << "\n";
         cout << "There are " << word_num << " words in the file." << "\n";
