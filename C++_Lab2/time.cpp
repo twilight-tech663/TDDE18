@@ -173,7 +173,6 @@ bool operator <=(const Time& time1, const Time& time2)
 
 std::ostream& operator <<(std::ostream& os, const Time& time)
 {
-    Time time_tmp{};
     os <<  std::setfill('0') << std::setw(2) << time.hour 
        << ":" << std::setw(2) << time.minute 
        << ":" << std::setw(2) << time.second;
