@@ -142,7 +142,7 @@ TEST_CASE("test time minus second, [operator -]")
     CHECK(time6.hour == time_result3.hour);
 }
 
-TEST_CASE("test second minus time, [operator +]")
+TEST_CASE("test second minus time, [operator -]")
 {
     Time time1{0,0,2};      
     Time time2{};
@@ -305,6 +305,11 @@ TEST_CASE("format input a time, [operator >>]")
     Time time1{};
     iss1 >> time1;
     CHECK(iss1.fail());
+
+    std::istringstream iss2{"24,66,30"};
+    Time time2{};
+    iss2 >> time2;
+    CHECK(iss2.fail());
 
     std::istringstream iss{"23:20:30"};
     Time time{};
