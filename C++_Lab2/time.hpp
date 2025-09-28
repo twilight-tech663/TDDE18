@@ -1,8 +1,7 @@
-#include <string>
-
 #ifndef TIME_HPP
 #define TIME_HPP
 
+#include <string>
 struct Time
 {
     int hour;
@@ -11,10 +10,9 @@ struct Time
 };
 
 bool is_valid(const Time &time);                // check time is valid
-std::string to_string(const Time& time, int format);    // 24-hour or 12-hour clock format
+std::string to_string(const Time& time, bool is_24hour = true);    // 24-hour or 12-hour clock format
 std::string time_zero_padding(const Time& time);   
-bool is_am(const Time &time);            // check if the time is before or after noon (am or pm)
-std::string am_pm(const Time &time);
+bool is_am(const Time& time);            // check if the time is before or after noon (am or pm)
 Time time_normalization(Time &time);    // deal with non-normal time, like hour > 24, minute&second > 60
 Time operator +(const Time& time, int second);  // T + second
 Time operator +(int second, const Time& time);  // second + T

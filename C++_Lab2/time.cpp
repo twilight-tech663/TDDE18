@@ -18,11 +18,11 @@ bool is_valid(const Time &time) // check time is valid
     return false;
 }
 
-std::string to_string(const Time& time, int format) //24-hour or 12-hour clock format
+std::string to_string(const Time& time, bool is_24hour) //24-hour or 12-hour clock format
 {
     std::string format_time;
     Time time_tmp{};
-    if(format == 24)                                // 24 hour format time
+    if(is_24hour)                                // 24 hour format time
     {
         return format_time = time_zero_padding(time);
     } else {                                        // 12 hour format time
@@ -33,7 +33,12 @@ std::string to_string(const Time& time, int format) //24-hour or 12-hour clock f
         }
         time_tmp.minute = time.minute;
         time_tmp.second = time.second;
-        return format_time = time_zero_padding(time_tmp) + " " + is_am(time);
+        if(is_am(time))
+        {
+            return format_time = time_zero_padding(time_tmp) + " am";
+        } else {
+            return format_time = time_zero_padding(time_tmp) + " pm";
+        }
     }
 }
 
@@ -45,25 +50,19 @@ std::string time_zero_padding(const Time& time)
     return hour_str + ":" + minute_str + ":" + second_str;
 }
 
-bool is_am(const Time &time) {
-    return time.hour < 12;  
-}
-std::string am_pm(const Time &time) {
-    return time.hour < 12 ? "am" : "pm";
+bool is_am(const Time& time)   //check if the time is before or after noon (am or pm)
+{  
+    return time.hour < 12;
 }
 
 Time time_normalization(Time &time)    // deal with non-normal time, like hour > 24, minute&second > 60
 {
     int total_second = time.hour * 3600 + time.minute * 60 + time.second;
-    int n;
-    if (total_second < 0)
-    {        
-        n = -total_second / 86400 + 1;
-        total_second += 24 * 3600 * n;      // if the result is negtive, need rollback n day
-    }
-    if (total_second >= 0 && total_second / 86400 >= 1){
-        n = total_second / 86400 + 1;
-        total_second -= 24 * 3600 * (n - 1);
+    if (total_second < 0)                           //if the result is negtive, need rollback day
+    {   
+        int roll_back_day = 1;
+        roll_back_day += total_second / (-86400);   // caculate roll back days
+        total_second += 86400 * roll_back_day;
     }
     time.hour = (total_second / 3600) % 24;
     time.minute = (total_second % 3600) / 60;
@@ -149,34 +148,34 @@ bool operator >(const Time& time1, const Time& time2)
 {
     int total_second_t1 = time1.hour*3600 + time1.minute*60 + time1.second;
     int total_second_t2 = time2.hour*3600 + time2.minute*60 + time2.second;
-    return total_second_t1 > total_second_t2 ? true : false ;
+    return total_second_t1 > total_second_t2;
 }
 
 bool operator <(const Time& time1, const Time& time2)   // use operator > overloading, only need to change parameter position
 {
-    return time2 > time1;       // it's equal to time1 < time2           
+    return !(time1 > time2);       // it's equal to time1 < time2           
 }
 
 bool operator ==(const Time& time1, const Time& time2)
 {
     int total_second_t1 = time1.hour*3600 + time1.minute*60 + time1.second;
     int total_second_t2 = time2.hour*3600 + time2.minute*60 + time2.second;
-    return total_second_t1 == total_second_t2 ? true : false ;
+    return total_second_t1 == total_second_t2;
 }
 
 bool operator !=(const Time& time1, const Time& time2)
 {
-    return time1 == time2 ? false : true;
+    return !(time1 == time2);
 }
 
 bool operator >=(const Time& time1, const Time& time2)
 {
-    return (time1 > time2 || time1 == time2) ? true : false;
+    return time1 > time2 || time1 == time2;
 }
 
 bool operator <=(const Time& time1, const Time& time2)
 {
-    return (time1 < time2 || time1 == time2) ? true : false;
+    return !(time1 > time2);
 }
 
 std::ostream& operator <<(std::ostream& os, const Time& time)
@@ -189,17 +188,16 @@ std::ostream& operator <<(std::ostream& os, const Time& time)
 
 std::istream& operator >>(std::istream& is, Time& time)
 {
-        char colon1, colon2;
-    if (is >> time.hour >> colon1 >> time.minute >> colon2 >> time.second && colon1 == ':' && colon2 == ':') {
-        Time tmp{time.hour, time.minute, time.second};
-        if (is_valid(tmp)) {
-            time = tmp; 
-        } else {
-            is.setstate(std::ios::failbit);
-        }
-    } else {
+    char colon1{};
+    char colon2{};
+    Time tmp_time;
+
+    is >> tmp_time.hour >> colon1 >> tmp_time.minute >> colon2 >> tmp_time.second;
+    if(!is_valid(tmp_time) || colon1 != ':' || colon2 != ':')
+    {
         is.setstate(std::ios::failbit);
+    } else {
+        time = tmp_time;
     }
     return is;
 }
-

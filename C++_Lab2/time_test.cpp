@@ -34,9 +34,9 @@ TEST_CASE("get a time as a string use 24 format or 12 format")
     Time time1{0,3,40};   
     Time time2{12,30,24};
     
-    CHECK(to_string(time1,24) == "00:03:40");
-    CHECK(to_string(time1,12) == "12:03:40 am");
-    CHECK(to_string(time2,12) == "12:30:24 pm");
+    CHECK(to_string(time1) == "00:03:40");
+    CHECK(to_string(time1,false) == "12:03:40 am");
+    CHECK(to_string(time2,false) == "12:30:24 pm");
 }
 
 TEST_CASE("judge time hour is am or pm")
@@ -44,11 +44,13 @@ TEST_CASE("judge time hour is am or pm")
     Time time1{12,23,23};
     Time time2{0,23,23};
 
-    CHECK(am_pm(time1) == "pm");
-    CHECK(am_pm(time2) == "am");
-    CHECK_FALSE(is_am(time1));
     CHECK(is_am(time2));
+    CHECK_FALSE(!is_am(time2));
+    CHECK(!is_am(time1));
+    CHECK_FALSE(is_am(time1));
+    
 }
+
 TEST_CASE("test non-normal time convert to a normal time")
 {
     Time time1{23,58,70};
@@ -87,6 +89,14 @@ TEST_CASE("test time plus second, [operator +]")
     CHECK(time6.second == time_result3.second);
     CHECK(time6.minute == time_result3.minute);
     CHECK(time6.hour == time_result3.hour);
+
+    Time time7{12,12,12};      
+    Time time8{};
+    time8 = time7 + 86400*50;          // plus fifty days
+    Time time_result4{12,12,12};
+    CHECK(time8.second == time_result4.second);
+    CHECK(time8.minute == time_result4.minute);
+    CHECK(time8.hour == time_result4.hour);
 }
 
 TEST_CASE("test second plus time, [operator +]")
@@ -115,12 +125,13 @@ TEST_CASE("test second plus time, [operator +]")
     CHECK(time6.minute == time_result3.minute);
     CHECK(time6.hour == time_result3.hour);
 
-    Time time7{};
-    time7 = 3 * 86400 + time3;
-    Time time_result4{0,0,10};     //plus 3 days
-    CHECK(time7.second == time_result4.second);
-    CHECK(time7.minute == time_result4.minute);
-    CHECK(time7.hour == time_result4.hour);
+    Time time7{12,12,12};      
+    Time time8{};
+    time8 = 86400*50 + time7;          // plus fifty days
+    Time time_result4{12,12,12};
+    CHECK(time8.second == time_result4.second);
+    CHECK(time8.minute == time_result4.minute);
+    CHECK(time8.hour == time_result4.hour);
 }
 
 TEST_CASE("test time minus second, [operator -]")
@@ -148,6 +159,14 @@ TEST_CASE("test time minus second, [operator -]")
     CHECK(time6.second == time_result3.second);
     CHECK(time6.minute == time_result3.minute);
     CHECK(time6.hour == time_result3.hour);
+
+    Time time7{12,12,12};      
+    Time time8{};
+    time8 = time7 - 86400*50;          // minus fifty days
+    Time time_result4{12,12,12};
+    CHECK(time8.second == time_result4.second);
+    CHECK(time8.minute == time_result4.minute);
+    CHECK(time8.hour == time_result4.hour);
 }
 
 TEST_CASE("test second minus time, [operator -]")
@@ -176,12 +195,13 @@ TEST_CASE("test second minus time, [operator -]")
     CHECK(time6.minute == time_result3.minute);
     CHECK(time6.hour == time_result3.hour);
 
-    Time time7{};
-    time7 = time3 - 3 * 86400;
-    Time time_result4{0,10,10};   //minus 3 days
-    CHECK(time7.second == time_result4.second);
-    CHECK(time7.minute == time_result4.minute);
-    CHECK(time7.hour == time_result4.hour);
+    Time time7{12,12,12};      
+    Time time8{};
+    time8 = 86400*50 - time7;          // minus fifty days
+    Time time_result4{12,12,12};
+    CHECK(time8.second == time_result4.second);
+    CHECK(time8.minute == time_result4.minute);
+    CHECK(time8.hour == time_result4.hour);
 }
 
 TEST_CASE("test ++time, [operator prefix ++]")
@@ -316,29 +336,21 @@ TEST_CASE("format output a time, [operator <<]")
 
 TEST_CASE("format input a time, [operator >>]")
 {
-    std::istringstream iss1{"24:66:30"};
-    Time time1{};
+    std::istringstream iss1{"24:66:30"};       // time is invaild
+    Time time1{10,10,10};
     iss1 >> time1;
     CHECK(iss1.fail());
+    CHECK(to_string(time1) == "10:10:10");
 
-    std::istringstream iss2{"24,66,30"};
-    Time time2{};
+    std::istringstream iss2{"23,30,30"};       // format error
+    Time time2{10,10,10};
     iss2 >> time2;
     CHECK(iss2.fail());
+    CHECK(to_string(time2) == "10:10:10");
 
-    std::istringstream iss3{"11,2"};
-    Time time3{};
-    iss3 >> time3;
-    CHECK(iss3.fail());
-
-    std::istringstream iss4{"99:99:99"};
-    Time time4{};
-    iss4 >> time4;
-    CHECK(iss4.fail());
-
-    std::istringstream iss{"23:20:30"};
-    Time time{};
+    std::istringstream iss{"23:20:30"};        // correct input
+    Time time{10,10,10};
     iss >> time;
     CHECK_FALSE(iss.fail());
-    CHECK(to_string(time,24) == "23:20:30");
+    CHECK(to_string(time) == "23:20:30");
 }
