@@ -45,17 +45,25 @@ std::string time_zero_padding(const Time& time)
     return hour_str + ":" + minute_str + ":" + second_str;
 }
 
-std::string is_am(const Time& time)   //check if the time is before or after noon (am or pm)
-{  
+bool is_am(const Time &time) {
+    return time.hour < 12;  
+}
+std::string am_pm(const Time &time) {
     return time.hour < 12 ? "am" : "pm";
 }
 
 Time time_normalization(Time &time)    // deal with non-normal time, like hour > 24, minute&second > 60
 {
     int total_second = time.hour * 3600 + time.minute * 60 + time.second;
+    int n;
     if (total_second < 0)
-    {
-        total_second += 24 * 3600;      // if the result is negtive, need rollback a day
+    {        
+        n = -total_second / 86400 + 1;
+        total_second += 24 * 3600 * n;      // if the result is negtive, need rollback n day
+    }
+    if (total_second >= 0 && total_second / 86400 >= 1){
+        n = total_second / 86400 + 1;
+        total_second -= 24 * 3600 * (n - 1);
     }
     time.hour = (total_second / 3600) % 24;
     time.minute = (total_second % 3600) / 60;
@@ -181,11 +189,15 @@ std::ostream& operator <<(std::ostream& os, const Time& time)
 
 std::istream& operator >>(std::istream& is, Time& time)
 {
-    char colon1{};
-    char colon2{};
-    is >> time.hour >> colon1 >> time.minute >> colon2 >> time.second;
-    if(!is_valid(time) || colon1 != ':' || colon2 != ':')
-    {
+        char colon1, colon2;
+    if (is >> time.hour >> colon1 >> time.minute >> colon2 >> time.second && colon1 == ':' && colon2 == ':') {
+        Time tmp{time.hour, time.minute, time.second};
+        if (is_valid(tmp)) {
+            time = tmp; 
+        } else {
+            is.setstate(std::ios::failbit);
+        }
+    } else {
         is.setstate(std::ios::failbit);
     }
     return is;
