@@ -1,3 +1,13 @@
+// TODO: Complementary work: All includes should be inside the guards.      //done
+
+// TODO: Complementary work: is_am() should return a bool.      //done
+
+// TODO: Complementary work: to_string's extra parameter should not be            
+// an int. What would it mean to send something like 5000?          //done
+
+// TODO: Comment: Usually if to_string() take additional arguments they have
+// default values, so that you can call them like 'to_string(something)'.       //done
+
 #ifndef TIME_HPP
 #define TIME_HPP
 

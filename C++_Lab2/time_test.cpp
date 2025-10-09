@@ -1,6 +1,18 @@
 #include "catch_amalgamated.hpp"
 #include "time.hpp"
 
+// TODO: Complementary work: Your tests are insufficient, adding/subtracting 
+// should be tested when input is a large number (such as three days 86 400*3) to  
+// show whether the Time is calculated correctly.                           // done
+
+// TODO: Complementary work: Your tests are insufficient, the fail-flag should  
+// be set if the format is wrong in operator>>(). Correct format is HH:MM:SS,
+// note the separators.                                                     // done
+
+// TODO: Complementary work: Test cases insufficient: If operator>>() fails,            
+// the variable we tried to read data into should be unchanged.      // done
+
+
 TEST_CASE("create a time")
 {
     Time time{10,10,10};

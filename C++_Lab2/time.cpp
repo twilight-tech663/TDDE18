@@ -3,6 +3,14 @@
 #include <iomanip>
 #include "time.hpp"
 
+// TODO: Complementary work: If your functions only return true or 
+// false with one condition then you should change it to return condition or 
+// !(condition). For ex: if (t1 < t2) {return false} --> return !(t1 < t2)      // done
+
+// TODO: Complementary work: operator>> should not destroy a valid time if it
+// gets invalid input.                                                          // done
+
+
 bool is_valid(const Time &time) // check time is valid
 {
     if(0 <= time.hour && time.hour <= 23)
