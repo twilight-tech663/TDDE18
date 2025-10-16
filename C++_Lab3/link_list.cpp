@@ -1,10 +1,13 @@
-/*Requirements
-At least one of these functions must be recursive and at least one of them must be iterative.
-*/
+#include "link_list.hpp"
+#include <iostream>
+#include <string>
 
-# include "link_list.hpp"
-# include <iostream>
-# include <string>
+// TODO: Complementary work: Do not repeat similar code
+// copy assignment/constructor                                  - done
+
+List::List(): 
+    head(nullptr)
+    {}
 
 List::List(std::initializer_list<int> list):head{nullptr}   // list constructor: initialize the list in order
 {
@@ -16,12 +19,7 @@ List::List(std::initializer_list<int> list):head{nullptr}   // list constructor:
 
 List::~List()       // destructor: move all nodes from list
 {
-    while(head != nullptr)
-    {
-        Node* tmp = head;
-        head = head->next;
-        delete tmp;
-    }
+    clear();
 }
 
 bool List::isEmpty() const
@@ -32,21 +30,6 @@ bool List::isEmpty() const
 void List::insert_node(int value)
 {
     head = insert_node_recursive(value, head);
-    /* iterate way
-    Node* tmp = new Node(value);
-    if(head == nullptr || value < head->value)      // insert node in head
-    {
-        tmp->next = head;
-        head = tmp;
-        return;
-    }
-    Node* current = head;
-    while(current->next != nullptr && value > current->next->value)     // insert node in tail and middle
-    {
-        current = current->next;
-    }
-    tmp->next = current->next;
-    current->next = tmp; */
 }
 
 List::Node* List::insert_node_recursive(int value, List::Node* current)
@@ -61,11 +44,11 @@ List::Node* List::insert_node_recursive(int value, List::Node* current)
     return current;
 }
 
-std::string List::list_print() const
+void List::list_print() const
 {
     if(isEmpty())
     {
-        return "";
+        std::cout << "";
     }
     std::string result{""};
     for(Node* current = head; current != nullptr; current = current->next)
@@ -76,7 +59,7 @@ std::string List::list_print() const
     {
         result.resize(result.length() - 4);
     }
-    return result;
+    std::cout << result;
 }
 
 void List::remove_node(int value)
@@ -86,32 +69,6 @@ void List::remove_node(int value)
         throw std::out_of_range("List is empty");
     }
     head = remove_node_recursive(value, head);
-
-    /* iterate way
-    if(isEmpty())       // empty list no node can remove
-    {
-        throw std::out_of_range("List is empty");
-    }
-
-    Node* current = head;
-    if(current->value == value)     // remove node from head
-    {
-        Node* tmp = current;
-        head = current->next;
-        delete tmp;
-        return;
-    }
-    while(current->next != nullptr && current->next->value != value)    // remove node from middle and tail
-    {
-        current = current->next;
-    }
-    if(current->next == nullptr)
-    {
-        throw std::out_of_range("Value not found");        // node not exist in list
-    }
-    Node* tmp = current->next;
-    current->next = current->next->next;
-    delete tmp;*/
 }
 
 List::Node* List::remove_node_recursive(int value, List::Node* current)
@@ -120,7 +77,7 @@ List::Node* List::remove_node_recursive(int value, List::Node* current)
     {
         throw::std::out_of_range("Node not exist in list");
     }
-    if(current->value == value)    // 
+    if(current->value == value)    // base case
     {   
         Node* tmp = current;
         current = current->next;
@@ -158,7 +115,7 @@ int List::at_list(int index) const
     return current->value;
 }
 
-List::List(List const& other)       // copy constructor
+void List::list_copy_from(const List& other)
 {
     if(other.isEmpty())
     {   
@@ -177,32 +134,29 @@ List::List(List const& other)       // copy constructor
     }
 }
 
+void List::clear()
+{
+    while(head != nullptr)             // delete all nodes
+    {
+        Node* tmp = head;
+        head = head->next;
+        delete tmp;
+    }
+}
+
+List::List(List const& other)       // copy constructor
+{
+    list_copy_from(other);
+}
+
 List& List::operator=(List const& other)        // copy assignments
 {
     if(this == &other)                // check is same list or not
     {
         return *this;
     }
-
-    while(head != nullptr)             // delete own nodes
-    {
-        Node* tmp = head;
-        head = head->next;
-        delete tmp;
-    }
-    if(!other.isEmpty())
-    {
-        Node* read = other.head;        // copy other's nodes into list
-        Node* write = new Node{read->value, nullptr};
-        head = write;                   // copy first node
-        while(read->next != nullptr)    // copy other nodes
-        {
-            read = read->next;
-            Node* tmp = new Node{read->value, nullptr};
-            write->next = tmp;
-            write = write->next;
-        }
-    }
+    clear();
+    list_copy_from(other);
     return *this;
 }
 
@@ -218,12 +172,7 @@ List& List::operator=(List&& other)
     {
         return *this;
     }
-    while(head != nullptr)             // delete own nodes
-    {
-        Node* tmp = head;
-        head = head->next;
-        delete tmp;
-    }
+    clear();
     if(!other.isEmpty())
     {
         head = other.head;
