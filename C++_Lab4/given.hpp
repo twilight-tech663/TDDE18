@@ -33,11 +33,11 @@ private:
     Point dir {};
 };
 
-class Ghosts
+class Ghost
 {
 public:
-    Ghosts(Pacman &p, Point start_pos, Point scatter_pos, std::string color);
-    virtual ~Ghosts() = default;
+    Ghost(Pacman &p, Point start_pos, Point scatter_pos, std::string color);
+    virtual ~Ghost() = default;
 
     bool out_bundary(Point const& P) const;
     void set_position(Point const& p);
@@ -54,7 +54,7 @@ protected:
     std::string color;
 };
 
-class Blinky : public Ghosts
+class Blinky : public Ghost
 {
 public:
     Blinky(Pacman& p, Point start_pos, Point scatter_pos, std::string color = "red");
@@ -68,7 +68,7 @@ private:
     bool angry;
 };
 
-class Pinky : public Ghosts
+class Pinky : public Ghost
 {
 public:
     Pinky(Pacman& p, Point start_pos, Point scatter_pos, std::string color = "pink");
@@ -77,7 +77,7 @@ public:
     Point get_scatter_point() const override;
 };
 
-class Clyde : public Ghosts
+class Clyde : public Ghost
 {
 public:
     Clyde(Pacman& p, Point start_pos, Point scatter_pos, int n, std::string color = "orange");
@@ -101,8 +101,7 @@ private:
     void draw_map();
     Pacman pacman;
     bool chase;
-    std::vector<Ghosts*> ghosts{};
+    std::vector<Ghost*> ghosts{};
 };
-
 
 #endif
