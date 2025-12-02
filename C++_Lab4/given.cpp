@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <cctype>
+#include <vector>
 
 int WIDTH = 19;
 int HEIGHT = 22;
@@ -205,24 +206,6 @@ void Ghost_Tester::run()
                 iss >> new_dir.x >> new_dir.y;
                 pacman.set_direction(new_dir);
             }
-            else if (command == "red" || command == "pink" || command == "orange")
-            {
-                Point new_pos{};
-                iss >> new_pos.x >> new_pos.y;
-
-                if(command == "red")
-                {
-                    ghosts[0]->set_position(new_pos);
-                }
-                else if(command == "pink")
-                {
-                    ghosts[1]->set_position(new_pos);
-                }
-                else if(command == "orange")
-                {
-                    ghosts[2]->set_position(new_pos);
-                }
-            }
             else if (command == "chase")
             {
                 chase = true;
@@ -238,6 +221,16 @@ void Ghost_Tester::run()
                 {
                     blinky->set_angry(true);
                 }
+            } else {
+                Point new_pos{};
+                iss >> new_pos.x >> new_pos.y;
+                for(Ghost* g : ghosts)
+                {
+                    if(command == g->get_color())
+                    {
+                        g->set_position(new_pos);
+                    }
+                }
             }
         }
         catch(std::runtime_error& e)
@@ -252,7 +245,7 @@ void Ghost_Tester::run()
         {
             break;
         }
-}
+    }
 }
 
 std::string Ghost_Tester::to_draw(Point const& curr_pos)

@@ -2,6 +2,7 @@
 #define GIVEN_H
 #include <stdexcept>
 #include <iostream>
+#include <vector>
 
 extern int WIDTH;
 extern int HEIGHT;
