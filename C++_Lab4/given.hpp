@@ -4,6 +4,9 @@
 #include <iostream>
 #include <vector>
 
+// TODO: Complementary work: Functions that are implemented the same way for
+// several Ghosts should be moved into the base class.   - done, modified get_scatter_point function
+
 extern int WIDTH;
 extern int HEIGHT;
 
@@ -45,7 +48,7 @@ public:
     Point get_position() const;
 
     virtual Point get_chase_point() const = 0;      // pure virtual function
-    virtual Point get_scatter_point() const = 0;
+    virtual Point get_scatter_point() const;
     std::string get_color() const;
 
 protected:
@@ -73,18 +76,15 @@ class Pinky : public Ghost
 {
 public:
     Pinky(Pacman& p, Point start_pos, Point scatter_pos, std::string color = "pink");
-
     Point get_chase_point() const override;
-    Point get_scatter_point() const override;
+    
 };
 
 class Clyde : public Ghost
 {
 public:
     Clyde(Pacman& p, Point start_pos, Point scatter_pos, int n, std::string color = "orange");
-
     Point get_chase_point() const override;
-    Point get_scatter_point() const override;
 
 private:
     int step;

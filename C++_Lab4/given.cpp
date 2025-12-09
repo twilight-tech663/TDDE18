@@ -7,6 +7,9 @@
 #include <cctype>
 #include <vector>
 
+// TODO: Complementary work: Ordering of ghosts cannot be assumed when testing.
+// What if there's multiple Blinky? Or what if Blinky was located at index 1? - modified, use loop
+
 int WIDTH = 19;
 int HEIGHT = 22;
 
@@ -80,6 +83,11 @@ std::string Ghost::get_color() const
     return color;
 }
 
+Point Ghost::get_scatter_point() const
+{
+    return scatterpos;
+}
+
 Blinky::Blinky(Pacman& p, Point start_pos, Point scatter_pos, std::string color)
     : Ghost{p, start_pos, scatter_pos, color}, angry{false}
 {}
@@ -136,11 +144,6 @@ Point Pinky::get_chase_point() const
     return p;
 }
 
-Point Pinky::get_scatter_point() const
-{
-    return scatterpos;
-}
-
 Clyde::Clyde(Pacman& p, Point start_pos, Point scatter_pos, int n, std::string color)
     : Ghost{p, start_pos, scatter_pos, color}, step{n}
 {}
@@ -155,11 +158,6 @@ Point Clyde::get_chase_point() const
     int distance = x + y;
 
     return distance > step ? p_pacman : scatterpos;
-}
-
-Point Clyde::get_scatter_point() const
-{
-    return scatterpos;
 }
 
 Ghost_Tester::Ghost_Tester()
@@ -216,10 +214,13 @@ void Ghost_Tester::run()
             }
             else if (command == "anger")
             {
-                Blinky* blinky = dynamic_cast<Blinky*>(ghosts[0]);   // set_angry only exist in blinky(derived) class
-                if(blinky != nullptr)                                // need convert base class pointer to derived class, compiler only know ghosts[0] is a base pointer, don't know it point to blinky
+                for(Ghost* g : ghosts)
                 {
-                    blinky->set_angry(true);
+                    Blinky* blinky = dynamic_cast<Blinky*>(g);   // set_angry only exist in blinky(derived) class
+                    if(blinky != nullptr)                                // need convert base class pointer to derived class, compiler only know ghosts[0] is a base pointer, don't know it point to blinky
+                    {
+                        blinky->set_angry(true);
+                    }
                 }
             } else {
                 Point new_pos{};
