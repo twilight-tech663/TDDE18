@@ -65,17 +65,16 @@ void text_editor::substitute(const std::string& old_word, const std::string& new
 {
     if(!word_exists(old_word))
     {
-        throw std::out_of_range("This word isn't exist in file!");
-    } else {
-        replace(text.begin(), text.end(), old_word, new_word);
-    } 
+        throw std::invalid_argument("This word isn't exist in file!");
+    }
+    replace(text.begin(), text.end(), old_word, new_word);
 }
 
 void text_editor::remove_word(const std::string& word)
 {
     if(!word_exists(word))
     {
-        throw std::out_of_range("This word isn't exist in file!");
+        throw std::invalid_argument("This word isn't exist in file!");
     } else {
         auto it = remove(text.begin(), text.end(), word);
         text.erase(it, text.end());
