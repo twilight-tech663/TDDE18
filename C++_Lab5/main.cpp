@@ -7,39 +7,57 @@
 int main(int argc, char* argv[])
 {
     std::vector<std::string> arguments{argv + 2, argv + argc};
-    text_editor text_edit(argv[1], arguments);
+    text_editor text_edit(argv[1]);
 
     try
     {
         std::for_each(arguments.begin(), arguments.end(), [&](const std::string& arg)
         {
-            text_edit.split_argument(arg);
+            std::string flag;
+            std::string parameter;
+            size_t pos = arg.find('=');
+            if (pos != std::string::npos)
+            {
+                flag = arg.substr(0, pos);
+                parameter = arg.substr(pos + 1);
+            } else {
+                flag = arg;
+                parameter = "";
+            }
 
-            if(text_edit.get_flag() == "--print")
+            if(flag == "--print")
             {
                 text_edit.print();
             }
 
-            else if(text_edit.get_flag() == "--frequency")       
+            else if(flag == "--frequency")       
             {
                 text_edit.frequency_table();
             }
 
-            else if(text_edit.get_flag() == "--substitude")
+            else if(flag == "--substitute")
             {
-                text_edit.substitude(text_edit.get_parameter());
+                std::string old_word;
+                std::string new_word;
+                size_t pos = parameter.find('+');
+                if(pos != std::string::npos)
+                {
+                    old_word = parameter.substr(0, pos);
+                    new_word = parameter.substr(pos + 1);
+                }
+                text_edit.substitute(old_word, new_word);
             }
 
-            else if(text_edit.get_flag() == "--remove")
+            else if(flag == "--remove")
             {
-                text_edit.remove_word(text_edit.get_parameter());
+                text_edit.remove_word(parameter);
             }
 
-            else if(text_edit.get_flag() == "--remove-duplicates")
+            else if(flag == "--remove-duplicates")
             {
                 text_edit.remove_duplicates();
             } else {
-                
+                std::cerr << "Not support yet!";
             }
         });
     } 

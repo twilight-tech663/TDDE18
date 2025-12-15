@@ -9,34 +9,13 @@
 #include <sstream>
 #include "text_editor.hpp"
 
-text_editor::text_editor(const std::string& filename, std::vector<std::string>& args)
-    :arguments{args}
+text_editor::text_editor(const std::string& filename)
+    :filename{filename}
 {
     std::ifstream data(filename);
-    copy(std::istream_iterator<std::string>(data), std::istream_iterator<std::string>(), back_inserter(text));
-}
-
-void text_editor::split_argument(const std::string& arg)
-{
-    size_t pos = arg.find('=');
-    if (pos != std::string::npos)
-    {
-        flag = arg.substr(0, pos);
-        parameter = arg.substr(pos + 1);
-    } else {
-        flag = arg;
-        parameter = "";
-    }
-}
-
-std::string text_editor::get_flag()
-{
-    return flag;
-}
-
-std::string text_editor::get_parameter()
-{
-    return parameter;
+    copy(std::istream_iterator<std::string>(data), 
+         std::istream_iterator<std::string>(), 
+         back_inserter(text));
 }
 
 void text_editor::print() const
@@ -45,7 +24,7 @@ void text_editor::print() const
     std::cout << "\n";
 }
 
-void text_editor::frequency_table()
+void text_editor::frequency_table() const
 {
     std::map<std::string, int> table{};
     for_each(text.begin(), text.end(),
@@ -77,23 +56,14 @@ void text_editor::frequency_table()
             });
 }
 
-bool text_editor::word_is_exist(const std::string& word)
+bool text_editor::word_exists(const std::string& word) const
 {
     return find(text.begin(), text.end(), word) != text.end();
 }
 
-void text_editor::substitude(const std::string& arg)
+void text_editor::substitute(const std::string& old_word, const std::string& new_word)
 {
-    std::string old_word;
-    std::string new_word;
-    size_t pos = arg.find('+');
-    if(pos != std::string::npos)
-    {
-        old_word = arg.substr(0, pos);
-        new_word = arg.substr(pos + 1);
-    }
-
-    if(!word_is_exist(old_word))
+    if(!word_exists(old_word))
     {
         throw std::out_of_range("This word isn't exist in file!");
     } else {
@@ -101,13 +71,13 @@ void text_editor::substitude(const std::string& arg)
     } 
 }
 
-void text_editor::remove_word(const std::string& arg)
+void text_editor::remove_word(const std::string& word)
 {
-    if(!word_is_exist(arg))
+    if(!word_exists(word))
     {
         throw std::out_of_range("This word isn't exist in file!");
     } else {
-        auto it = remove(text.begin(), text.end(), arg);
+        auto it = remove(text.begin(), text.end(), word);
         text.erase(it, text.end());
     }
 }

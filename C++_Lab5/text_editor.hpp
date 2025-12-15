@@ -8,21 +8,16 @@
 class text_editor
 {
 public:
-    text_editor(const std::string& filename, std::vector<std::string>& args);
-    void split_argument(const std::string& arg);
-    std::string get_flag();
-    std::string get_parameter();
+    text_editor(const std::string& filename);
     void print() const;
-    void frequency_table();
-    bool word_is_exist(const std::string& word);
-    void substitude(const std::string& arg);
-    void remove_word(const std::string& arg);
+    void frequency_table() const;
+    bool word_exists(const std::string& word) const;
+    void substitute(const std::string& old_word, const std::string& new_word);
+    void remove_word(const std::string& word);
     void remove_duplicates();
     
 private:
-    std::string flag{};
-    std::string parameter{};
-    std::vector<std::string> arguments{};
+    std::string filename{};
     std::vector<std::string> text{}; 
 };
 
