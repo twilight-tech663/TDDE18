@@ -9,9 +9,9 @@ int main(int argc, char* argv[])
     std::vector<std::string> arguments{argv + 2, argv + argc};
     text_editor text_edit(argv[1]);
 
-    try
+    std::for_each(arguments.begin(), arguments.end(), [&](const std::string& arg)
     {
-        std::for_each(arguments.begin(), arguments.end(), [&](const std::string& arg)
+        try
         {
             std::string flag;
             std::string parameter;
@@ -66,15 +66,15 @@ int main(int argc, char* argv[])
             } else {
                 std::cerr << "Not support yet!" << "\n";
             }
-        });
-    } 
-    catch(std::invalid_argument& e)
-    {
-        std::cerr << "Error: " << e.what() << "\n";
-    }
-    catch(std::exception& e)
-    {
-        std::cerr << "Unkonw Error: " << e.what() << "\n";
-    }
+        }
+        catch(std::invalid_argument& e)
+        {
+            std::cerr << "Error: " << e.what() << "\n";
+        }
+        catch(std::exception& e)
+        {
+            std::cerr << "Error: " << e.what() << "\n";
+        }
+    }); 
     return 0;
 }
