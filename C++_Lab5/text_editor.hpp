@@ -4,26 +4,26 @@
 #include <iostream>
 #include <vector>
 #include <string>
-using namespace std;
 
 class text_editor
 {
 public:
-    text_editor(const string& filename, vector<string>& args);
-    void split_argument(const string& arg);
-    string get_flag();
-    string get_argument();
+    text_editor(const std::string& filename, std::vector<std::string>& args);
+    void split_argument(const std::string& arg);
+    std::string get_flag();
+    std::string get_parameter();
     void print() const;
     void frequency_table();
-    void substitude(const string& arg);
-    void remove_word(const string& arg);
+    bool word_is_exist(const std::string& word);
+    void substitude(const std::string& arg);
+    void remove_word(const std::string& arg);
     void remove_duplicates();
     
 private:
-    string flag{};
-    string argument{};
-    vector<string> arguments{};
-    vector<string> text{}; 
+    std::string flag{};
+    std::string parameter{};
+    std::vector<std::string> arguments{};
+    std::vector<std::string> text{}; 
 };
 
 #endif
